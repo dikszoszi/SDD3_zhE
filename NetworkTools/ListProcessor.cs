@@ -3,15 +3,21 @@ using System.Linq;
 
 namespace NetworkTools
 {
-    public class ListProcessor
+    public static class ListProcessor
     {
-        public List<PingStats> GetSummarizedStats(List<PingStats> originalList)
+        public static IEnumerable<PingStats> GetSummarizedStats(IEnumerable<PingStats> originalList)
         {
             if (originalList is null) throw new System.ArgumentNullException(nameof(originalList), "Parametre cannot be null");
 
-            return originalList.GroupBy(pingstat => pingstat.Address)
-                .Select(grp => new PingStats { Address = grp.Key, Packets = grp.Sum(ps => ps.Packets), TotalBytes = grp.Sum(ps => ps.TotalBytes), TotalMs = grp.Sum(ps => ps.TotalMs) })
-                .ToList();
+            return from pingStat in originalList
+                   group pingStat by pingStat.Address into grp
+                   select new PingStats
+                   {
+                       Address = grp.Key,
+                       Packets = grp.Sum(ps => ps.Packets),
+                       TotalBytes = grp.Sum(ps => ps.TotalBytes),
+                       TotalMs = grp.Sum(ps => ps.TotalMs)
+                   };
         }
     }
 }

@@ -18,7 +18,7 @@ namespace NetworkTools
 
         private void Pingging(string path)
         {
-            while (true)
+            while (!this.cts.IsCancellationRequested)
             {
                 this.cts.Token.ThrowIfCancellationRequested();
                 Thread.Sleep(5000);
@@ -35,10 +35,7 @@ namespace NetworkTools
             if (pingStatList.Count < 100) pingStatList.Add(pingStats);
         }
 
-        public static List<PingStats> GetListCopy()
-        {
-            return pingStatList;
-        }
+        public static IEnumerable<PingStats> ListCopy => pingStatList;
 
         public void Cancel()
         {

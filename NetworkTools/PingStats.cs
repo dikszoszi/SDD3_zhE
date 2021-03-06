@@ -1,4 +1,5 @@
-﻿namespace NetworkTools
+﻿[assembly: System.CLSCompliant(false)]
+namespace NetworkTools
 {
     public class PingStats
     {
@@ -22,7 +23,7 @@
 
         public override int GetHashCode()
         {
-            return this.Address.GetHashCode() + this.Packets + this.TotalBytes + this.TotalMs;
+            return this.Packets + this.TotalBytes + this.TotalMs;
         }
 
         public override string ToString()

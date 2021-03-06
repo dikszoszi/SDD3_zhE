@@ -2,66 +2,64 @@
 using System.Collections.Generic;
 using System;
 using NetworkTools;
+using System.Linq;
 
+[assembly: CLSCompliant(false)]
 namespace NetworkTools.TESTS
 {
     /// <summary>
-    /// Ez az osztály a <see cref="ListProcessor.GetSummarizedStats(List{PingStats})"/> metódusát teszteli.
+    /// Ez az osztály a <see cref="ListProcessor.GetSummarizedStats(IEnumerable{PingStats})"/> metódusát teszteli.
     /// </summary>
     [TestFixture]
     public class ListProcessorTester
     {
         [Test]
-        public void NotWorking_With_NullParametre()
+        public void DisfunctionalWithNullParameter()
         {
-            ListProcessor lp = new ListProcessor();
-            Assert.That(() => lp.GetSummarizedStats(null), Throws.ArgumentNullException);
+            Assert.That(() => ListProcessor.GetSummarizedStats(null), Throws.ArgumentNullException);
         }
 
         [Test]
-        public void ArgumentListCount_SameAs_ReturnListCount()
+        public void ArgumentListCountEqualsReturnListCount()
         {
-            ListProcessor lp = new ListProcessor();
-            List<PingStats> emptyList = new List<PingStats>();
-            List<PingStats> singleItem = new List<PingStats> { new PingStats() };
+            List<PingStats> emptyList = new ();
+            List<PingStats> singleItem = new () { new PingStats() };
 
-            List<PingStats> zeroCount = lp.GetSummarizedStats(emptyList);
-            List<PingStats> oneCount = lp.GetSummarizedStats(singleItem);
+            List<PingStats> zeroCount = ListProcessor.GetSummarizedStats(emptyList).ToList();
+            List<PingStats> oneCount = ListProcessor.GetSummarizedStats(singleItem).ToList();
 
             Assert.That(zeroCount.Count, Is.EqualTo(emptyList.Count));
             Assert.That(oneCount.Count, Is.EqualTo(singleItem.Count));
         }
 
         [Test]
-        public void ArgumentListHasSingleHost_ReturnedListHasSingleItem()
+        public void ArgumentListHasSingleHostReturnedListHasSingleItem()
         {
-            ListProcessor lp = new ListProcessor();
-            List<PingStats> input = new List<PingStats>
+            List<PingStats> input = new ()
             {
                 new PingStats { Address = "host.xy" },
                 new PingStats { Address = "host.xy" },
                 new PingStats { Address = "host.xy" },
             };
-            List<PingStats> expected = new List<PingStats> { new PingStats { Address = "host.xy" } };
+            List<PingStats> expected = new () { new PingStats { Address = "host.xy" } };
 
-            List<PingStats> output = lp.GetSummarizedStats(input);
+            List<PingStats> output = ListProcessor.GetSummarizedStats(input).ToList();
 
             Assert.That(output.Count, Is.EqualTo(expected.Count));
             Assert.That(output, Is.EquivalentTo(expected));
         }
 
         [Test]
-        public void ArgumentListHasOnlyDifferentHosts_ReturnedListIsEquivalent()
+        public void ArgumentListHasOnlyDifferentHostsReturnedListIsEquivalent()
         {
-            ListProcessor lp = new ListProcessor();
-            List<PingStats> input = new List<PingStats>
+            List<PingStats> input = new ()
             {
                 new PingStats { Address = "first.xy" },
                 new PingStats { Address = "second.xy" },
                 new PingStats { Address = "third.xy" },
             };
 
-            List<PingStats> output = lp.GetSummarizedStats(input);
+            List<PingStats> output = ListProcessor.GetSummarizedStats(input).ToList();
 
             Assert.That(output, Is.EquivalentTo(input));
         }
